@@ -1,0 +1,877 @@
+{
+    "exportFormatVersion": 2,
+    "exportTime": "2017-03-25 23:35:19",
+    "containerVersion": {
+        "path": "accounts/164412618/containers/1892935/versions/61",
+        "accountId": "164412618",
+        "containerId": "1892935",
+        "containerVersionId": "61",
+        "container": {
+            "path": "accounts/164412618/containers/1892935",
+            "accountId": "164412618",
+            "containerId": "1892935",
+            "name": "demo.scommerce-mage.co.uk",
+            "publicId": "GTM-589GWF",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1471117839585",
+            "tagManagerUrl": "https://tagmanager.google.com/#/container/accounts/164412618/containers/1892935/workspaces?apiLink=container"
+        },
+        "tag": [
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "1",
+                "name": "Universal Analytics",
+                "type": "ua",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useEcommerceDataLayer",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "doubleClick",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setTrackerName",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useDebugVersion",
+                        "value": "false"
+                    },
+                    {
+                        "type": "LIST",
+                        "key": "fieldsToSet",
+                        "list": [
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "fieldName",
+                                        "value": "campaignMedium"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{UTMMedium}}"
+                                    }
+                                ]
+                            },
+                            {
+                                "type": "MAP",
+                                "map": [
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "fieldName",
+                                        "value": "campaignSource"
+                                    },
+                                    {
+                                        "type": "TEMPLATE",
+                                        "key": "value",
+                                        "value": "{{UTMSource}}"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useHashAutoLink",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackType",
+                        "value": "TRACK_PAGEVIEW"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "decorateFormsAutoLink",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableLinkId",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableEcommerce",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackingId",
+                        "value": "{{GA ID}}"
+                    }
+                ],
+                "fingerprint": "1457220466065",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT"
+            },
+			{
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "33",
+                "name": "Universal Analytics - Upsell Products",
+                "type": "ua",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "nonInteraction",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "overrideGaSettings",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useEcommerceDataLayer",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackType",
+                        "value": "TRACK_EVENT"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableEcommerce",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackingId",
+                        "value": "{{GA ID}}"
+                    }
+                ],
+                "fingerprint": "1536620342298",
+                "firingTriggerId": [
+                    "114"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD"
+            },
+			{
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "34",
+                "name": "Universal Analytics - Related Product",
+                "type": "ua",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "nonInteraction",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "overrideGaSettings",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useEcommerceDataLayer",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackType",
+                        "value": "TRACK_EVENT"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableEcommerce",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackingId",
+                        "value": "{{GA ID}}"
+                    }
+                ],
+                "fingerprint": "1536619968826",
+                "firingTriggerId": [
+                    "117"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "3",
+                "name": "Universal Analytics Add To Cart",
+                "type": "ua",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "nonInteraction",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useEcommerceDataLayer",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "doubleClick",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setTrackerName",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useDebugVersion",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventCategory",
+                        "value": "Ecommerce"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackType",
+                        "value": "TRACK_EVENT"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableLinkId",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventAction",
+                        "value": "Add to Cart"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableEcommerce",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackingId",
+                        "value": "{{GA ID}}"
+                    }
+                ],
+                "fingerprint": "1453889491027",
+                "firingTriggerId": [
+                    "6"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "5",
+                "name": "Universal Analytics Checkout",
+                "type": "ua",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "nonInteraction",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useEcommerceDataLayer",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "doubleClick",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setTrackerName",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useDebugVersion",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventCategory",
+                        "value": "Ecommerce"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackType",
+                        "value": "TRACK_EVENT"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableLinkId",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventAction",
+                        "value": "Checkout"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableEcommerce",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackingId",
+                        "value": "{{GA ID}}"
+                    }
+                ],
+                "fingerprint": "1453907006076",
+                "firingTriggerId": [
+                    "8"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "2",
+                "name": "Universal Analytics Product Click",
+                "type": "ua",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "nonInteraction",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useEcommerceDataLayer",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "doubleClick",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setTrackerName",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useDebugVersion",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventCategory",
+                        "value": "Ecommerce"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackType",
+                        "value": "TRACK_EVENT"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableLinkId",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventAction",
+                        "value": "Product Click"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableEcommerce",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackingId",
+                        "value": "{{GA ID}}"
+                    }
+                ],
+                "fingerprint": "1453850186002",
+                "firingTriggerId": [
+                    "4"
+                ],
+                "tagFiringOption": "UNLIMITED"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "4",
+                "name": "Universal Analytics Remove from Cart",
+                "type": "ua",
+                "parameter": [
+                    {
+                        "type": "BOOLEAN",
+                        "key": "nonInteraction",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useEcommerceDataLayer",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "doubleClick",
+                        "value": "true"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setTrackerName",
+                        "value": "false"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "useDebugVersion",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventCategory",
+                        "value": "Ecommerce"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackType",
+                        "value": "TRACK_EVENT"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableLinkId",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "eventAction",
+                        "value": "Remove From Cart"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "enableEcommerce",
+                        "value": "true"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "trackingId",
+                        "value": "{{GA ID}}"
+                    }
+                ],
+                "fingerprint": "1453892452638",
+                "firingTriggerId": [
+                    "7"
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT"
+            }
+        ],
+        "trigger": [
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "6",
+                "name": "Add To Cart",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "addToCart"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "addToCart"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1453889449233"
+            },
+			{
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "117",
+                "name": "Related Products",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "related_product"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "related_product"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1536619962493"
+            },
+			{
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "114",
+                "name": "Upsell Products",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "upsell_product"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "upsell_product"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1536619483261"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "8",
+                "name": "Checkout",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "checkout"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "checkout"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1453906995722"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "4",
+                "name": "Product Click",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "productClick"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "productClick"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1453851861097"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "7",
+                "name": "Remove From Cart",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "removeFromCart"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "removeFromCart"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1453892424471"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "1",
+                "name": "GA ID",
+                "type": "c",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "value",
+                        "value": "UA-XXXXXXXX-X"
+                    }
+                ],
+                "fingerprint": "1462479426446"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "2",
+                "name": "source",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "ecommerce.purchase.actionField.source"
+                    }
+                ],
+                "fingerprint": "1577704439664",
+                "formatValue": {}
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "3",
+                "name": "UTMSource",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function()\n{\n  var sourceFromDataLayer = {{source}};\n  if (typeof sourceFromDataLayer != 'undefined') {\n  \treturn sourceFromDataLayer;\n  }\n  return localStorage.getItem('utm_source');\n}"
+                    }
+                ],
+                "fingerprint": "1577704473860",
+                "formatValue": {}
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "4",
+                "name": "medium",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "ecommerce.purchase.actionField.medium"
+                    }
+                ],
+                "fingerprint": "1577704336700",
+                "formatValue": {}
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "5",
+                "name": "UTMMedium",
+                "type": "jsm",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "javascript",
+                        "value": "function()\n{\n  var mediumFromDataLayer = {{medium}};\n  if (typeof mediumFromDataLayer != 'undefined') {\n  \treturn mediumFromDataLayer;\n  }\n  return localStorage.getItem('utm_medium');\n}"
+                    }
+                ],
+                "fingerprint": "1577704395645",
+                "formatValue": {}
+            }
+        ],
+        "builtInVariable": [
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "type": "PAGE_URL",
+                "name": "Page URL"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "type": "PAGE_HOSTNAME",
+                "name": "Page Hostname"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "type": "PAGE_PATH",
+                "name": "Page Path"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "type": "REFERRER",
+                "name": "Referrer"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "type": "EVENT",
+                "name": "Event"
+            }
+        ],
+        "fingerprint": "1471457476029",
+        "tagManagerUrl": "https://tagmanager.google.com/#/versions/accounts/164412618/containers/1892935/versions/61?apiLink=version"
+    }
+}

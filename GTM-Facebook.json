@@ -1,0 +1,717 @@
+{
+    "exportFormatVersion": 1.3,
+    "exportTime": "2016-09-15 19:37:09",
+    "containerVersion": {
+        "accountId": "164412618",
+        "containerId": "1892935",
+        "containerVersionId": "61",
+        "deleted": false,
+        "container": {
+            "accountId": "164412618",
+            "containerId": "1892935",
+            "name": "demo.scommerce-mage.co.uk",
+            "publicId": "GTM-589GWF",
+            "timeZoneCountryId": "US",
+            "timeZoneId": "America/Los_Angeles",
+            "notes": "",
+            "usageContext": [
+                "WEB"
+            ],
+            "fingerprint": "1471117839585",
+            "enabledBuiltInVariable": [
+                "PAGE_URL",
+                "PAGE_HOSTNAME",
+                "PAGE_PATH",
+                "REFERRER",
+                "EVENT"
+            ]
+        },
+        "tag": [
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "20",
+                "name": "Facebook Add To Cart Event",
+                "type": "html",
+                "liveOnly": false,
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nvar productIDs = '{{addedPID}}';\nvar results = productIDs.split(\",\");\nfbq('track', 'AddToCart', {\n        content_ids: results, //array of one or more product SKUs in the page`z\n        content_type: 'product',\n   \t\tcontent_name: '{{addedPName}}',\n        value: '{{addedPPrice}}', //OPTIONAL, but highly recommended\n        currency: '{{currencyCode}}' //REQUIRED if you pass a value\n    });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1470957955151",
+                "firingTriggerId": [
+                    "6"
+                ],
+                "setupTag": [
+                    {
+                        "tagName": "Facebook Audience Tracking",
+                        "stopOnSetupFailure": true
+                    }
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "18",
+                "name": "Facebook Audience Tracking",
+                "type": "html",
+                "liveOnly": false,
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<!-- Facebook Pixel Code -->\n<script>\n!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?\nn.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;\nn.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;\nt.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,\ndocument,'script','//connect.facebook.net/en_US/fbevents.js');\n\nfbq('init', '{{facebookPixelID}}');\nfbq('track', 'PageView');\n</script>\n<noscript><img height=\"1\" width=\"1\" style=\"display:none\"\nsrc=\"https://www.facebook.com/tr?id={{facebookPixelID}}&ev=PageView&noscript=1\"\n/></noscript>\n<!-- End Facebook Pixel Code -->\n\n"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1470952775258",
+                "firingTriggerId": [
+                    "2147479553"
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "21",
+                "name": "Facebook Initiate Checkout Event",
+                "type": "html",
+                "liveOnly": false,
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  fbq('track', 'InitiateCheckout');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1471096089774",
+                "firingTriggerId": [
+                    "31"
+                ],
+                "setupTag": [
+                    {
+                        "tagName": "Facebook Audience Tracking",
+                        "stopOnSetupFailure": true
+                    }
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "22",
+                "name": "Facebook Initiate Payment Event",
+                "type": "html",
+                "liveOnly": false,
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n  fbq('track', 'AddPaymentInfo');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1471096019558",
+                "firingTriggerId": [
+                    "32"
+                ],
+                "setupTag": [
+                    {
+                        "tagName": "Facebook Audience Tracking"
+                    }
+                ],
+                "tagFiringOption": "ONCE_PER_LOAD"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "17",
+                "name": "Facebook Product View Content Event",
+                "type": "html",
+                "liveOnly": false,
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\n\tfbq('track', 'ViewContent', {\n    content_type: 'product', //either 'product' or 'product_group'\n    content_ids: ['{{productID}}'], //array of one or more product SKUs in the page\n    value: '{{productPrice}}',    //OPTIONAL, but highly recommended\n    currency: '{{currencyCode}}' //REQUIRED if you a pass value\n    });\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1470952953020",
+                "firingTriggerId": [
+                    "17"
+                ],
+                "setupTag": [
+                    {
+                        "tagName": "Facebook Audience Tracking",
+                        "stopOnSetupFailure": true
+                    }
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "23",
+                "name": "Facebook Purchase Event",
+                "type": "html",
+                "liveOnly": false,
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nvar productIDs = '{{productID}}';\nvar results = productIDs.split(\",\");\nfbq('track', 'Purchase', {\n    content_type: 'product', //either 'product' or 'product_group'\n    content_ids: results, //array of one or more product SKUs in the page\n    value: '{{total}}', //REQUIRED\n    currency: '{{currencyCode}}' //REQUIRED\n});\n</script>\n"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1471094041225",
+                "firingTriggerId": [
+                    "19"
+                ],
+                "setupTag": [
+                    {
+                        "tagName": "Facebook Audience Tracking",
+                        "stopOnSetupFailure": true
+                    }
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "tagId": "19",
+                "name": "Facebook Search Event",
+                "type": "html",
+                "liveOnly": false,
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "html",
+                        "value": "<script>\nfbq('track', 'Search');\n</script>"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "supportDocumentWrite",
+                        "value": "false"
+                    }
+                ],
+                "fingerprint": "1470953329235",
+                "firingTriggerId": [
+                    "13"
+                ],
+                "setupTag": [
+                    {
+                        "tagName": "Facebook Audience Tracking",
+                        "stopTeardownOnFailure": true
+                    }
+                ],
+                "tagFiringOption": "ONCE_PER_EVENT"
+            }
+        ],
+        "fingerprint": "1471457476029",
+        "trigger": [
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "6",
+                "name": "Add To Cart",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "addToCart"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "addToCart"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1453889449233"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "31",
+                "name": "CheckoutInitiate",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "checkout"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "checkout"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{checkoutSteps}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "1"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1470956704093"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "32",
+                "name": "InitiatePayment",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "checkout"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "checkout"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{checkoutSteps}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "4"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1470957047908"
+            },
+			{
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "17",
+                "name": "Remarketing Tag Product",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "fireRemarketingTag_product"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "fireRemarketingTag_product"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1470859507415"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "19",
+                "name": "Remarketing Tag Purchase",
+                "type": "CUSTOM_EVENT",
+                "customEventFilter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{_event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "fireRemarketingTag_purchase"
+                            }
+                        ]
+                    }
+                ],
+                "filter": [
+                    {
+                        "type": "EQUALS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Event}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "fireRemarketingTag_purchase"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1470860659377"
+            },
+			{
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "triggerId": "13",
+                "name": "Search Result Page",
+                "type": "PAGEVIEW",
+                "filter": [
+                    {
+                        "type": "CONTAINS",
+                        "parameter": [
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg0",
+                                "value": "{{Page URL}}"
+                            },
+                            {
+                                "type": "TEMPLATE",
+                                "key": "arg1",
+                                "value": "result"
+                            }
+                        ]
+                    }
+                ],
+                "fingerprint": "1454115877967"
+            }
+        ],
+        "variable": [
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "12",
+                "name": "checkoutSteps",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "ecommerce.checkout.actionField.step"
+                    }
+                ],
+                "fingerprint": "1470956596880"
+            },
+			{
+                "accountId": "565186682",
+                "containerId": "2739889",
+                "variableId": "18",
+                "name": "addedPID",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "ecommerce.add.products.0.id"
+                    }
+                ],
+                "fingerprint": "1519853324332"
+            },
+            {
+                "accountId": "565186682",
+                "containerId": "2739889",
+                "variableId": "19",
+                "name": "addedPName",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "ecommerce.add.products.0.name"
+                    }
+                ],
+                "fingerprint": "1519853358115"
+            },
+            {
+                "accountId": "565186682",
+                "containerId": "2739889",
+                "variableId": "17",
+                "name": "addedPPrice",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "ecommerce.add.products.0.price"
+                    }
+                ],
+                "fingerprint": "1519853283946"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "7",
+                "name": "currencyCode",
+                "type": "c",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "value",
+                        "value": "GBP"
+                    }
+                ],
+                "fingerprint": "1458671408377"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "8",
+                "name": "facebookPixelID",
+                "type": "c",
+                "parameter": [
+                    {
+                        "type": "TEMPLATE",
+                        "key": "value",
+                        "value": "XXXXXXXXXX"
+                    }
+                ],
+                "fingerprint": "1470951829267"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "9",
+                "name": "productID",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "google_tag_params.ecomm_prodid"
+                    }
+                ],
+                "fingerprint": "1470991140166"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "10",
+                "name": "productPrice",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "google_tag_params.ecomm_pvalue"
+                    }
+                ],
+                "fingerprint": "1470952241570"
+            },
+            {
+                "accountId": "164412618",
+                "containerId": "1892935",
+                "variableId": "11",
+                "name": "total",
+                "type": "v",
+                "parameter": [
+                    {
+                        "type": "INTEGER",
+                        "key": "dataLayerVersion",
+                        "value": "2"
+                    },
+                    {
+                        "type": "BOOLEAN",
+                        "key": "setDefaultValue",
+                        "value": "false"
+                    },
+                    {
+                        "type": "TEMPLATE",
+                        "key": "name",
+                        "value": "google_tag_params.ecomm_totalvalue"
+                    }
+                ],
+                "fingerprint": "1471093983295"
+            }
+        ]
+    }
+}
