@@ -64,6 +64,7 @@ class Scommerce_GoogleTagManagerPro_Model_Observer
     */
     public function removeProductCookie(Varien_Event_Observer $observer)
     {
+        return;
         if (!$this->_helper->isEnabled()) return;
 		
 		$quoteItem = $observer->getQuoteItem();
