@@ -6,11 +6,25 @@
 
 $_productCollection = $this->getProductCollection();
 $helper = Mage::helper('scommerce_googletagmanagerpro');
-
+$taxHelper = Mage::helper('tax');
+if ($helper->isGA4Enabled()):
+    $useGa4 = true;
+else:
+    $useGa4 = false;
+endif;
+if ($helper->isUAEnabled()):
+    $useUA = true;
+else:
+    $useUA = false;
+endif;
 if (!$helper->isEnabled() || !$helper->isEEEnabled() || count($_productCollection)==0) return;
 
 $_category = Mage::getModel('catalog/layer')->getCurrentCategory();
 $_categoryName = '';
+
+if ($_category->getDisplayMode() == 'PAGE') {
+    return;
+}
 
 if ($_category){
     $_categoryName = $_category->getName();
@@ -39,7 +53,7 @@ foreach ($_productCollection as $_product){
     $_products[] = array(
         'id' => $this->jsQuoteEscape($_product->getSku()),
         'name'  => $this->jsQuoteEscape($_product->getName()),
-		'price'  => $this->helper('core')->currency($_product->getPrice(),false,false),
+        'price'  => $this->helper('core')->currency($helper->getProductPrice($_product),false,false),
         'category' => $this->jsQuoteEscape($_categoryName),
         'brand' => $this->jsQuoteEscape($helper->getBrand($_product)),
         'list'  => $_impressionList,
@@ -52,80 +66,167 @@ foreach ($_productCollection as $_product){
 $_JsProducts = json_encode($_products);
 $_JsProductUrls = json_encode($_productUrls);
 ?>
+<?php if ($useUA || $useGa4): ?>
+    <script type='text/javascript'>
+        //<![CDATA[
+        var jsProducts = <?php echo $_JsProducts ?>;
+        Mage.Cookies.set("productlist", "");
+        Mage.Cookies.set("googlecategory","");
+        Mage.Cookies.set("trackinglist",'<?php echo $_impressionList ?>')
 
-<script type='text/javascript'>
-    //<![CDATA[
-    var jsProducts = <?php echo $_JsProducts ?>;
-	Mage.Cookies.set("productlist", "");
-	Mage.Cookies.set("googlecategory","");
+        window.dataLayer = window.dataLayer || [];
+        <?php if ($useUA): ?>
+        dataLayer.push({
+            'event': 'view_item_list',
+            'ecommerce': {
+                'currencyCode': '<?php echo Mage::app()->getStore()->getCurrentCurrencyCode();?>',                       // Local currency is optional.
+                'impressions': [
+                    <?php foreach ($_products as $_product):?>
+                    {
+                        'name': '<?php echo $_product['name']?>',
+                        'id': '<?php echo $_product['id']?>',
+                        'price': <?php echo $_product['price']?>,
+                        'brand': '<?php echo $_product['brand']?>',
+                        'category': '<?php echo $_product['category']?>',
+                        'list': '<?php echo $_product['list']?>',
+                        'position': '<?php echo $_product['position']?>'
+                        <?php if ($_product['position']==count($_products)):?>
+                    }]
+                <?php else:?>
+            },
+            <?php endif;?>
+            <?php endforeach;?>
+        }
+        });
+        <?php endif; ?>
+        <?php if ($useGa4): ?>
+        dataLayer.push({ ecommerce: null });
+        dataLayer.push({
+            'event': 'view_item_list',
+            'ecommerce': {
+                'items': convertItemList(jsProducts)
+            }
+        });
+        <?php endif; ?>
 
-	window.dataLayer = window.dataLayer || [];
-	dataLayer.push({
-          'event': 'view_item_list',
-	  'ecommerce': {
-		'currencyCode': '<?php echo Mage::app()->getStore()->getCurrentCurrencyCode();?>',                       // Local currency is optional.
-		'impressions': [
-		<?php foreach ($_products as $_product):?>
-{
-		   'name': '<?php echo $_product['name']?>',
-		   'id': '<?php echo $_product['id']?>',
-		   'price': '<?php echo $_product['price']?>',
-		   'brand': '<?php echo $_product['brand']?>',
-		   'category': '<?php echo $_product['category']?>',
-		   'list': '<?php echo $_product['list']?>',
-		   'position': '<?php echo $_product['position']?>'
-			<?php if ($_product['position']==count($_products)):?>
-}]
-			<?php else:?>
-},
-			<?php endif;?>
-		<?php endforeach;?>
-		}
-	});
-    //]]>
-</script>
+        function convertItemList(data) {
+            let impr = [];
+            for (let i = 0; i < data.length; i++) {
+                let product = data[i];
+                impr.push({
+                    item_id: product.id,
+                    item_name: product.name,
+                    price: formatPrice(product.price, false),
+                    item_brand: product.brand,
+                    item_list_name: product.list,
+                    item_list_id: getListId(product.list),
+                    index: product.position,
+                    quantity: 1,
+                    affiliation: "<?php echo $helper->getAffiliation(); ?>",
+                    currency: "<?php echo $helper->getCurrency(); ?>"
+                });
+                let categories = product.category.split('->');
+                impr[i]['item_category'] = categories[0];
+                for (let j = 1; j < categories.length; j++) {
+                    key = 'item_category' + (j + 1);
+                    impr[i][key] = categories[j];
+                }
+            }
+            return impr;
+        }
 
-<script type='text/javascript'>
-    //<![CDATA[
-	gtmPro(document).ready(function() {
-		var jsProductUrls = <?php echo $_JsProductUrls ?>;
-		var jsClickLabel = '<?php echo $_clickLabel?>';
-		gtmPro('a').on('click', function(e){
-			var product;
-			var href = gtmPro(this).attr('href');
-			var index = jsProductUrls.indexOf(href);
+        function formatPrice(priceValue, asString) {
+            let val = priceValue;
+            if (typeof val === 'string')
+            {
+                val = val.replace(/,/g, '');
+            }
+            if (asString === undefined || asString !== true) {
+                return parseFloat(parseFloat(val).toFixed(2));
+            }
+            return parseFloat(val).toFixed(2);
+        }
 
-			if (index != -1 && window.ga && ga.loaded){
-				e.preventDefault(e);
-				product = jsProducts[index];
-				Mage.Cookies.set('productlist', product.list);
-				Mage.Cookies.set('googlecategory', product.category);
-				dataLayer.push({
-					'event': 'productClick',
-					'ecommerce': {
-					  'click': {
-						'actionField': {'list': '<?php echo $_clickLabel?>'},      // Optional list property.
-						'products': [{
-						  'name': product.name,                      // Name or ID is required.
-						  'id': product.id,
-						  'price': product.price,
-						  'brand': product.brand,
-						  'category': product.category,
-						  'position': product.position
-						 }]
-					   }
-					 },
-					 'eventCallback': function() {
-					   if (!(e.ctrlKey || e.which==2)){
-							document.location = href;
-						}
-					 }
-				});
-			}
-			else{
-				document.location = href;
-			}
-		});
-	});
-    //]]>
-</script>
+        function getListId(listName) {
+            if (listName !== undefined && listName !== "undefined")
+                return listName.trim().replace(/[^\w ]/g,' ').replace(/\s\s+/g, ' ').replace(/\s/g, '_').toLowerCase();
+        }
+
+        gtmPro(document).ready(function() {
+            var jsProductUrls = <?php echo $_JsProductUrls ?>;
+            var jsClickLabel = '<?php echo $_clickLabel?>';
+            gtmPro('a').on('click', function(e){
+                var product;
+                var href = gtmPro(this).attr('href');
+                var index = jsProductUrls.indexOf(href);
+
+                if (index != -1 && window.ga && ga.loaded){
+                    e.preventDefault(e);
+                    product = jsProducts[index];
+                    Mage.Cookies.set('productlist', product.list);
+                    Mage.Cookies.set('googlecategory', product.category);
+                    <?php if ($useUA): ?>
+                    dataLayer.push({ ecommerce: null });
+                    dataLayer.push({
+                        'event': 'productClick',
+                        'ecommerce': {
+                            'click': {
+                                'actionField': {'list': '<?php echo $_clickLabel?>'},      // Optional list property.
+                                'products': [{
+                                    'name': product.name,                      // Name or ID is required.
+                                    'id': product.id,
+                                    'price': product.price,
+                                    'brand': product.brand,
+                                    'category': product.category,
+                                    'position': product.position
+                                }]
+                            }
+                        },
+                        'eventCallback': function() {
+                            if (!(e.ctrlKey || e.which==2)){
+                                document.location = href;
+                            }
+                        }
+                    });
+                    <?php endif; ?>
+                    <?php if ($useGa4): ?>
+                    dataLayer.push({ ecommerce: null });
+                    let items = {
+                        'item_name': product.name,
+                        'item_id': product.id,
+                        'price': formatPrice(product.price, false),
+                        'item_brand': product.brand,
+                        'item_list_name': product.list,
+                        'item_list_id': getListId(product.list),
+                        'index': product.position,
+                        'affiliation': "<?php echo $helper->getAffiliation(); ?>",
+                        'currency': "<?php echo $helper->getCurrency(); ?>"
+                    };
+                    let categories = product.category.split('->');
+                    items['item_category'] = categories[0];
+                    for (let j = 1; j < categories.length; j++) {
+                        key = 'item_category' + (j + 1);
+                        items[key] = categories[j];
+                    }
+                    let content = {
+                        'event': 'select_item',
+                        'ecommerce': {
+                            'items': [items]
+                        },
+                        'eventCallback': function() {
+                            if (!(e.ctrlKey || e.which==2)){
+                                document.location = href;
+                            }
+                        }
+                    };
+                    dataLayer.push(content);
+                    <?php endif; ?>
+                }
+                else{
+                    document.location = href;
+                }
+            });
+        });
+        //]]>
+    </script>
+<?php endif; ?>

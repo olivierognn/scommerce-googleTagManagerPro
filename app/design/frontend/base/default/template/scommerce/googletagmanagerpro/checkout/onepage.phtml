@@ -5,91 +5,115 @@
 ?>
 <?php
 $helper = Mage::helper('scommerce_googletagmanagerpro');
+if ($helper->isGA4Enabled()):
+    $useGa4 = true;
+else:
+    $useGa4 = false;
+endif;
+if ($helper->isUAEnabled()):
+    $useUA = true;
+else:
+    $useUA = false;
+endif;
 if (!$helper->isEnabled() || !$helper->isEEEnabled()) return; ?>
 <?php $cartItems = $this->getCartItems(); ?>
 <script type='text/javascript'>
-//<![CDATA[
-/**
- * Called when the user begins the checkout process.
- */
-gtmPro(document).ready(function($) {
-	Billing.prototype.save = function()
-    {
-		var checkoutMethod = '';
-		if (checkout.method.length>0){
-			checkoutMethod = checkout.method;
-		}
-		else{
-			checkoutMethod = 'Registered User';
-		}
-        if (checkout.loadWaiting!=false) return;
+    //<![CDATA[
+    /**
+     * Called when the user begins the checkout process.
+     */
+    gtmPro(document).ready(function($) {
+        Billing.prototype.save = function()
+        {
+            var checkoutMethod = '';
+            if (checkout.method.length>0){
+                checkoutMethod = checkout.method;
+            }
+            else{
+                checkoutMethod = 'Registered User';
+            }
+            if (checkout.loadWaiting!=false) return;
 
-        var validator = new Validation(this.form);
-        if (validator.validate()) {
-            checkout.setLoadWaiting('billing');
-			//	alert('billing');
-			<?php $intCtr=0;?>
-			 dataLayer.push({
-				'event': 'checkout',
-				'ecommerce': {
-				  'checkout': {
-					'actionField': {'step': 1, 'option': gtmPro('input[name="billing[use_for_shipping]"]:checked').attr('title') + ' - ' + checkoutMethod},
-					'products': [
-					  <?php foreach($cartItems as $_quoteItem) : ?>
-							<?php $intCtr++;?>
-							<?php if ($_quoteItem->getParentItemId()) continue; ?>
-					{
-					  'name': '<?php echo $this->jsQuoteEscape($_quoteItem->getName()) ?>',
-					  'id': '<?php echo $this->jsQuoteEscape($_quoteItem->getSku()) ?>',
-					  'price': '<?php echo $_quoteItem->getBasePrice() ?>',
-					  'brand': '<?php echo $this->jsQuoteEscape($helper->getBrand($_quoteItem->getProduct())) ?>',
-					  'category': '<?php echo $this->jsQuoteEscape($helper->getQuoteCategoryName($_quoteItem)) ?>',
-					  'quantity': '<?php echo $_quoteItem->getQty() ?>'
-					  <?php if ($intCtr==count($cartItems)):?>
-}]
-					  <?php else:?>
-},
-					  <?php endif;?>
-					  <?php endforeach; ?>
-				   
-				 }
-			   },
-			   'eventCallback': function() {
-				  //document.location = 'checkout.html';
-			   }
-			  });
-           
-            var request = new Ajax.Request(
-                this.saveUrl,
-                {
-                    method: 'post',
-                    onComplete: this.onComplete,
-                    onSuccess: this.onSave,
-                    onFailure: checkout.ajaxFailure.bind(checkout),
-                    parameters: Form.serialize(this.form)
+            var validator = new Validation(this.form);
+            if (validator.validate()) {
+                checkout.setLoadWaiting('billing');
+                <?php $intCtr=0;?>
+                <?php if ($useUA): ?>
+                dataLayer.push({
+                        'event': 'checkout',
+                        'ecommerce': {
+                            'checkout': {
+                                'actionField': {'step': 1, 'option': gtmPro('input[name="billing[use_for_shipping]"]:checked').attr('title') + ' - ' + checkoutMethod},
+                                'products': [
+                                    <?php foreach($cartItems as $_quoteItem) : ?>
+                                    <?php $intCtr++;?>
+                                    <?php if ($_quoteItem->getParentItemId()) continue; ?>
+                                    <?php
+                                        $itemPrice = $helper->itemIncludedVAT() ? $_quoteItem->getBasePriceInclTax() : $_quoteItem->getBasePrice();;
+                                    ?>
+                                    {
+                                        'name': '<?php echo $this->jsQuoteEscape($_quoteItem->getName()) ?>',
+                                        'id': '<?php echo $this->jsQuoteEscape($_quoteItem->getSku()) ?>',
+                                        'price': <?php echo $itemPrice ?>,
+                                        'brand': '<?php echo $this->jsQuoteEscape($helper->getBrand($_quoteItem->getProduct())) ?>',
+                                        'category': '<?php echo $this->jsQuoteEscape($helper->getQuoteCategoryName($_quoteItem)) ?>',
+                                        'quantity': '<?php echo $_quoteItem->getQty() ?>'
+                                        <?php if ($intCtr==count($cartItems)):?>
+                                    }]
+                                <?php else:?>
+                            },
+                            <?php endif;?>
+                            <?php endforeach; ?>
+
+                        }
+                    },
+                    'eventCallback': function() {
+                    //document.location = 'checkout.html';
                 }
-            );
+            });
+    <?php endif; ?>
+    <?php if ($useGa4): ?>
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+        'event': 'begin_checkout',
+        'ecommerce': {
+            'items': convertCheckoutItems()
         }
+    });
+    <?php endif; ?>
+    var request = new Ajax.Request(
+        this.saveUrl,
+        {
+            method: 'post',
+            onComplete: this.onComplete,
+            onSuccess: this.onSave,
+            onFailure: checkout.ajaxFailure.bind(checkout),
+            parameters: Form.serialize(this.form)
+        }
+    );
+    }
     };
-	
+
     Shipping.prototype.save = function(){
         if (checkout.loadWaiting!=false) return;
         var validator = new Validation(this.form);
         if (validator.validate()) {
             checkout.setLoadWaiting('shipping');
-			<?php $intCtr=0;?>
-			dataLayer.push({
-				'event': 'checkoutOption',
-				'ecommerce': {
-				  'checkout_option': {
-					'actionField': {'step': 2, 'option': (gtmPro('input[name="shipping[same_as_billing]"]').is(':checked')) ? 'Use Billing Address' : 'Use Different Shipping Address'}
-				 }
-				},
-				'eventCallback': function() {
-				  //document.location = 'checkout.html';
-				}
-			});
-
+            <?php $intCtr=0;?>
+            <?php if ($useUA): ?>
+            dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                'event': 'checkoutOption',
+                'ecommerce': {
+                    'checkout_option': {
+                        'actionField': {'step': 2, 'option': (gtmPro('input[name="shipping[same_as_billing]"]').is(':checked')) ? 'Use Billing Address' : 'Use Different Shipping Address'}
+                    }
+                },
+                'eventCallback': function() {
+                    //document.location = 'checkout.html';
+                }
+            });
+            <?php endif; ?>
             var request = new Ajax.Request(
                 this.saveUrl,
                 {
@@ -102,25 +126,38 @@ gtmPro(document).ready(function($) {
             );
         }
     };
-    
+
     ShippingMethod.prototype.save = function () {
         if (checkout.loadWaiting != false) return;
 
         if (this.validate()) {
             checkout.setLoadWaiting('shipping-method');
-			<?php $intCtr=0;?>
-			dataLayer.push({
-				'event': 'checkoutOption',
-				'ecommerce': {
-				  'checkout_option': {
-					'actionField': {'step': 3, 'option': gtmPro('input[name=shipping_method]:checked').val()}
-				 }
-				},
-				'eventCallback': function() {
-				  //document.location = 'checkout.html';
-				}
-			});
-
+            <?php $intCtr=0;?>
+            <?php if ($useUA): ?>
+            dataLayer.push({ecommerce: null});
+            dataLayer.push({
+                'event': 'checkoutOption',
+                'ecommerce': {
+                    'checkout_option': {
+                        'actionField': {'step': 3, 'option': gtmPro.trim(gtmPro('input[name=shipping_method]:checked').closest('li').find('label').contents().get(0).nodeValue)}
+                    }
+                },
+                'eventCallback': function() {
+                    //document.location = 'checkout.html';
+                }
+            });
+            <?php endif;?>
+            <?php if ($useGa4): ?>
+            dataLayer.push({ecommerce: null});
+            dataLayer.push({
+                'event': 'add_shipping_info',
+                'ecommerce': {
+                    'currency': "<?php echo $helper->getCurrency(); ?>",
+                    'shipping_tier': gtmPro.trim(gtmPro('input[name=shipping_method]:checked').closest('li').find('label').contents().get(0).nodeValue),
+                    'items': convertPurchaseItems()
+                }
+            });
+            <?php endif; ?>
             var request = new Ajax.Request(
                 this.saveUrl,
                 {
@@ -133,26 +170,38 @@ gtmPro(document).ready(function($) {
             );
         }
     };
-    
+
     Payment.prototype.save = function () {
         if (checkout.loadWaiting != false) return;
 
         var validator = new Validation(this.form);
         if (this.validate() && validator.validate()) {
             checkout.setLoadWaiting('payment');
-			<?php $intCtr=0;?>
-			dataLayer.push({
-				'event': 'checkoutOption',
-				'ecommerce': {
-				  'checkout_option': {
-					'actionField': {'step': 4, 'option': gtmPro('input[name="payment[method]"]:checked').val()}
-				 }
-				},
-				'eventCallback': function() {
-				  //document.location = 'checkout.html';
-				}
-			});
-			
+            <?php $intCtr=0;?>
+            <?php if ($useUA): ?>
+            dataLayer.push({
+                'event': 'checkoutOption',
+                'ecommerce': {
+                    'checkout_option': {
+                        'actionField': {'step': 4, 'option': gtmPro.trim(gtmPro('input[name="payment[method]"]:checked').closest('dt').find('label').contents().get(0).nodeValue)}
+                    }
+                },
+                'eventCallback': function() {
+                    //document.location = 'checkout.html';
+                }
+            });
+            <?php endif; ?>
+            <?php if ($useGa4): ?>
+            dataLayer.push({ecommerce: null});
+            dataLayer.push({
+                'event': 'add_payment_info',
+                'ecommerce': {
+                    'currency': "<?php echo $helper->getCurrency(); ?>",
+                    'payment_type': gtmPro.trim(gtmPro('input[name="payment[method]"]:checked').closest('dt').find('label').contents().get(0).nodeValue),
+                    'items': convertPurchaseItems()
+                }
+            });
+            <?php endif; ?>
             var request = new Ajax.Request(
                 this.saveUrl,
                 {
@@ -165,30 +214,30 @@ gtmPro(document).ready(function($) {
             );
         }
     };
-	
+
     Review.prototype.save = function()
     {
-		if (checkout.loadWaiting!=false) return;
+        if (checkout.loadWaiting!=false) return;
         checkout.setLoadWaiting('review');
-		<?php $intCtr=0;?>
+        <?php $intCtr=0;?>
         var params = Form.serialize(payment.form);
         if (this.agreementsForm) {
             params += '&'+Form.serialize(this.agreementsForm);
         }
         params.save = true;
-		
-		dataLayer.push({
-			'event': 'checkoutOption',
-			'ecommerce': {
-			  'checkout_option': {
-				'actionField': {'step': 5, 'option': 'Review Order'}
-			 }
-			},
-			'eventCallback': function() {
-			  //document.location = 'checkout.html';
-			}
-		});
-		
+
+        dataLayer.push({
+            'event': 'checkoutOption',
+            'ecommerce': {
+                'checkout_option': {
+                    'actionField': {'step': 5, 'option': 'Review Order'}
+                }
+            },
+            'eventCallback': function() {
+                //document.location = 'checkout.html';
+            }
+        });
+
         var request = new Ajax.Request(
             this.saveUrl,
             {
@@ -200,6 +249,71 @@ gtmPro(document).ready(function($) {
             }
         );
     };
-});
-//]]>
+    });
+    function convertCheckoutItems() {
+        let prods = [];
+        <?php foreach ($cartItems as $item): ?>
+        <?php
+            $itemPrice = $helper->itemIncludedVAT() ? $item->getBasePriceInclTax() : $item->getBasePrice();;
+        ?>
+        prods.push({
+            item_name: '<?php echo $this->jsQuoteEscape($item->getName()) ?>',
+            item_id: '<?php echo $this->jsQuoteEscape($item->getSku()) ?>',
+            price: formatPrice('<?php echo $itemPrice?>', false),
+            item_brand: '<?php echo $this->jsQuoteEscape($helper->getBrand($item->getProduct())) ?>',
+            item_category: '<?php echo $this->jsQuoteEscape($helper->getQuoteCategoryName($item)) ?>',
+            quantity: '<?php echo $item->getQty() ?>',
+            item_list_name: "<?php echo $item->getTrackingList() ?>",
+            item_list_id: getListId("<?php echo $item->getTrackingList() ?>"),
+            affiliation: "<?php echo $helper->getAffiliation(); ?>",
+            currency: "<?php echo $helper->getCurrency(); ?>"
+        });
+        <?php endforeach; ?>
+
+        return prods;
+    }
+
+    function convertPurchaseItems() {
+        let prods = [];
+        <?php $loop = 1; ?>
+        <?php foreach ($cartItems as $item): ?>
+        <?php
+            $itemPrice = $helper->itemIncludedVAT() ? $item->getBasePriceInclTax() : $item->getBasePrice();;
+        ?>
+        prods.push({
+            item_name: '<?php echo $this->jsQuoteEscape($item->getName()) ?>',
+            item_id: '<?php echo $this->jsQuoteEscape($item->getSku()) ?>',
+            price: formatPrice('<?php echo $itemPrice ?>', false),
+            item_brand: '<?php echo $this->jsQuoteEscape($helper->getBrand($item->getProduct())) ?>',
+            item_category: '<?php echo $this->jsQuoteEscape($helper->getQuoteCategoryName($item)) ?>',
+            item_list_name: "<?php echo $item->getTrackingList() ?>",
+            item_list_id: getListId("<?php echo $item->getTrackingList() ?>"),
+            quantity: '<?php echo $item->getQty() ?>',
+            affiliation: "<?php echo $helper->getAffiliation(); ?>",
+            currency: "<?php echo $helper->getCurrency(); ?>",
+            index: "<?php echo $this->jsQuoteEscape($loop); ?>"
+        });
+        <?php $loop++; ?>
+        <?php endforeach; ?>
+
+        return prods;
+    }
+
+    function formatPrice(priceValue, asString) {
+        let val = priceValue;
+        if (typeof val === 'string')
+        {
+            val = val.replace(/,/g, '');
+        }
+        if (asString === undefined || asString !== true) {
+            return parseFloat(parseFloat(val).toFixed(2));
+        }
+        return parseFloat(val).toFixed(2);
+    }
+
+    function getListId(listName) {
+        if (listName !== undefined && listName !== "undefined")
+            return listName.trim().replace(/[^\w ]/g,' ').replace(/\s\s+/g, ' ').replace(/\s/g, '_').toLowerCase();
+    }
+    //]]>
 </script>

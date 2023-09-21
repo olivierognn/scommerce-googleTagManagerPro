@@ -1,52 +1,124 @@
 <?php $helper = Mage::helper('scommerce_googletagmanagerpro');
-$string = Mage::getModel('core/session')->getRefundOrder();
+$string = Mage::getModel('core/session')->getRefundOrder()!==null?Mage::getModel('core/session')->getRefundOrder() :'';
 $result = json_decode($string,true);
-$products = $result['products'];
-$storeId =  $result["storeId"];
+$products = is_array($result) && array_key_exists('products',$result) ? $result['products'] : '';
+$storeId =  is_array($result) && array_key_exists('storeId',$result) ? $result['storeId'] : '';
 $intCtr = 0;
 $bGTM = false;
-if($helper->isEnabled($storeId) && $helper->isEEEnabled($storeId) && strlen($string)>0): 
+if ($helper->isGA4Enabled()):
+    $useGa4 = true;
+else:
+    $useGa4 = false;
+endif;
+if ($helper->isUAEnabled()):
+    $useUA = true;
+else:
+    $useUA = false;
+endif;
+if($helper->isEnabled($storeId) && $helper->isEEEnabled($storeId) && strlen($string)>0):
 $bGTM = true;
 ?>
 	<script type="text/javascript">
 	//<![CDATA[
+    var prods = [];
+    <?php foreach ($products as $product): ?>
+        prods.push(<?php echo json_encode($product) ?>);
+    <?php endforeach; ?>
 
 	window.dataLayer = window.dataLayer || [];
 	<?php if(!$result['fullrefund']):?>
-	dataLayer.push({
-          'event': 'refund',
-	  'ecommerce': {
-		'refund': {
-		  'actionField': {'id': '<?php echo $result['orderId']?>'},        // Transaction ID.
-		  'products': [
-						<?php foreach($products as $product):
-							  $intCtr++;?>
-							{'id': '<?php echo $product['id']?>', 'quantity': <?php echo $product['qty']?>}<?php if ($intCtr!=count($products)) echo ','?>
-						<?php endforeach;?>
-					]
-				}
-			}
-		});
-	<?php else:?>
-	dataLayer.push({
-          'event': 'refund',
-	  'ecommerce': {
-		'refund': {
-		  'actionField': {'id': '<?php echo $result['orderId']?>'}         // Transaction ID. Required for purchases and refunds.
-		}
-	  }
-	});			
+        <?php if ($useUA): ?>
+        dataLayer.push({ ecommerce: null });
+        eventData = {
+            'event': 'refund',
+            'ecommerce': {
+                'refund': {
+                    'actionField': {'id': '<?php echo $result['orderId']?>'},        // Transaction ID.
+                    'products': [
+                        <?php foreach($products as $product):
+                        $intCtr++;?>
+                        {'id': '<?php echo $product['id']?>', 'quantity': <?php echo $product['qty']?>}<?php if ($intCtr!=count($products)) echo ','?>
+                        <?php endforeach;?>
+                    ]
+                }
+            }
+        };
+        dataLayer.push(eventData);
+        <?php endif; ?>
+        <?php if($useGa4): ?>
+        dataLayer.push({ ecommerce: null });
+        let res = [];
+        for (let i=0; i<prods.length; i++) {
+            let prod = prods[i];
+            res.push({
+                item_name: prod.name,
+                item_id: prod.id,
+                item_brand: prod.brand,
+                item_category: prod.category,
+                quantity: prod.quantity,
+                price: formatPrice(prod.price)
+            });
+        }
+        result = <?php echo json_encode($result); ?>
+
+        eventDataGA4 = {
+            event: 'refund',
+            ecommerce: {
+                currency: "<?php echo $result['currency']?>",
+                value: "<?php echo $result['value']?>",
+                affiliation: "<?php echo $result['affiliation']?>",
+                coupon: "<?php echo $result['coupon']?>",
+                shipping: "<?php echo $result['shipping']?>",
+                tax: "<?php echo $result['tax']?>",
+                transaction_id: '<?php echo $result['orderId']?>',
+                items: res
+            }
+        }
+        dataLayer.push(eventDataGA4);
+        <?php endif; ?>
+    <?php else:?>
+        <?php if ($useUA): ?>
+            dataLayer.push({
+                  'event': 'refund',
+              'ecommerce': {
+                'refund': {
+                  'actionField': {'id': '<?php echo $result['orderId']?>'}         // Transaction ID. Required for purchases and refunds.
+                }
+              }
+            });
+        <?php endif; ?>
+        <?php if($useGa4): ?>
+        dataLayer.push({ecommerce: null});
+        dataLayer.push({
+            event: 'refund',
+            ecommerce: {
+                transaction_id: '<?php echo $result['orderId']?>'
+            }
+        });
+        <?php endif; ?>
 	<?php endif;
 	Mage::getModel('core/session')->unsRefundOrder();?>
+
+    function formatPrice(priceValue, asString) {
+        let val = priceValue;
+        if (typeof val === 'string')
+        {
+            val = val.replace(/,/g, '');
+        }
+        if (asString === undefined || asString !== true) {
+            return parseFloat(parseFloat(val).toFixed(2));
+        }
+        return parseFloat(val).toFixed(2);
+    }
 	//]]>
 	</script>
 <?php endif;?>
 
 <?php 
-$string = Mage::getModel('core/session')->getOrderData();
+$string = Mage::getModel('core/session')->getOrderData()!==null?Mage::getModel('core/session')->getOrderData() :'';
 $result = json_decode($string,true);
-$products = $result['products'];
-$storeId =  $result['storeId'];
+$products = is_array($result) && array_key_exists('products',$result) ? $result['products'] : '';
+$storeId =  is_array($result) && array_key_exists('storeId',$result) ? $result['storeId'] : '';
 $intCtr = 0;
 if($helper->isEnabled($storeId) && $helper->isEEEnabled($storeId) && strlen($string)>0 && $helper->sendPhoneOrderTransaction($storeId)): 
 $bGTM = true;
@@ -55,8 +127,38 @@ $bGTM = true;
 	//<![CDATA[
 		window.dataLayer = window.dataLayer || [];
 		<?php $intCtr=0;?>
+        <?php if ($useGa4): ?>
+        let prods = <?php echo json_encode($products) ?>;
+        let items = [];
+        for (let i=0; i<prods.length; i++) {
+            let prod = prods[i];
+            items.push({
+                item_name: prod.name,
+                item_id: prod.id,
+                price: formatPrice(prod.price),
+                item_brand: prod.brand,
+                item_category: prod.category,
+                quantity: prod.quantity
+            });
+        }
+        dataLayer.push({ ecommerce: null });
+        dataLayer.push({
+            'event': 'purchase',
+            'ecommerce': {
+                transaction_id: '<?php echo $result['id']?>',
+                affiliation: '<?php echo $result['affiliation'] ?>',
+                value: formatPrice('<?php echo $result['revenue']?>'),
+                tax: formatPrice('<?php echo $result['tax']?>'),
+                shipping: formatPrice('<?php echo $result['shipping']?>'),
+                currency: '<?php echo $result['currency']?>',
+                coupon: '<?php echo $result['coupon']?>',
+                items: items
+            }
+        });
+        <?php endif; ?>
+        <?php if ($useUA): ?>
+        dataLayer.push({ ecommerce: null });
 		dataLayer.push({
-                  'event': 'purchase',
 		  'ecommerce': {
 			'purchase': {
 			  'actionField': {
@@ -88,6 +190,18 @@ $bGTM = true;
 			}
 		  }
 		});
+        <?php endif; ?>
+    function formatPrice(priceValue, asString) {
+        let val = priceValue;
+        if (typeof val === 'string')
+        {
+            val = val.replace(/,/g, '');
+        }
+        if (asString === undefined || asString !== true) {
+            return parseFloat(parseFloat(val).toFixed(2));
+        }
+        return parseFloat(val).toFixed(2);
+    }
 	//]]>
 	</script>
 <?php endif;

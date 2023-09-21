@@ -1,0 +1,57 @@
+<?php
+/**
+ * @var $this Scommerce_GoogleTagManagerPro_Block_Cart
+ */
+?>
+<?php
+
+$helper = Mage::helper('scommerce_googletagmanagerpro');
+
+if (!$helper->isEnabled() || !$helper->isEEEnabled() || !$helper->isGA4Enabled()) return; ?>
+
+<script type="text/javascript">
+    window.dataLayer = window.dataLayer || [];
+
+    jsCartItems = <?php echo json_encode($this->getCartItems()); ?>
+
+    dataLayer.push({ ecommerce: null });
+
+    dataLayer.push({
+        'event': 'view_cart',
+        'ecommerce': {
+            'currency': "<?php echo $helper->getCurrency(); ?>",
+            'value': "<?php echo $this->getCartTotal(); ?>",
+            'items': convertCartItems(jsCartItems)
+        }
+    });
+
+    function convertCartItems(data)
+    {
+        let prods = [];
+        for (let i = 0; i < data.length; i++) {
+            prods.push({
+                item_name: data[i].name,
+                item_id: data[i].id,
+                price: data[i].price,
+                item_brand: data[i].brand,
+                quantity: data[i].quantity,
+                item_list_name: data[i].list,
+                item_list_id: getListId(data[i].list),
+                affiliation: "<?php $helper->getAffiliation(); ?>",
+                currency: "<?php echo $helper->getCurrency(); ?>"
+            });
+            let categories = data[i].category.split('->');
+            prods[i]['item_category'] = categories[0];
+            for (let j = 1; j < categories.length; j++) {
+                key = 'item_category' + (j + 1);
+                prods[i][key] = categories[j];
+            }
+        }
+        return prods;
+    }
+
+    function getListId(listName) {
+        if (listName !== undefined && listName !== "undefined")
+            return listName.trim().replace(/[^\w ]/g,' ').replace(/\s\s+/g, ' ').replace(/\s/g, '_').toLowerCase();
+    }
+</script>

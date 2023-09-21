@@ -4,6 +4,16 @@
  */
 ?>
 <?php $helper = Mage::helper('scommerce_googletagmanagerpro');
+if ($helper->isGA4Enabled()):
+    $useGa4 = true;
+else:
+    $useGa4 = false;
+endif;
+if ($helper->isUAEnabled()):
+    $useUA = true;
+else:
+    $useUA = false;
+endif;
 if (!$helper->isEnabled() || !$helper->isEEEnabled()) return; 
 $order = $this->getOrder(); 
 if ($helper->sendBaseData()):
@@ -17,15 +27,35 @@ else:
 	$orderShippingTotal	= $order->getShippingAmount();
 	$orderTax			= $order->getTaxAmount();
 endif;
+if ($helper->revenueWithoutShipping()) {
+    $orderGrandTotal = $orderGrandTotal - $orderShippingTotal;
+}
 $orderItems = $order->getAllVisibleItems();
 //exit;
 ?>
 <script type="text/javascript">
 //<![CDATA[
 	window.dataLayer = window.dataLayer || [];
+    <?php if ($useGa4): ?>
+    dataLayer.push({ ecommerce: null });
+    dataLayer.push({
+        'event': 'purchase',
+        'ecommerce': {
+            transaction_id: '<?php echo $order->getIncrementId();?>',
+            affiliation: '<?php echo $order->getAffiliation(); ?>',
+            value: formatPrice('<?php echo $orderGrandTotal;?>', false),
+            tax: formatPrice('<?php echo $orderTax;?>', false),
+            shipping: formatPrice('<?php echo $orderShippingTotal;?>', false),
+            coupon: '<?php echo $order->getCouponCode(); ?>',
+            currency: "<?php echo $helper->getCurrency(); ?>",
+            items: convertPurchaseItems()
+        }
+    });
+    <?php endif; ?>
 	<?php $intCtr=0;?>
+    <?php if ($useUA): ?>
+    dataLayer.push({ ecommerce: null });
 	dataLayer.push({
-          'event': 'purchase',
 	  'ecommerce': {
 	    'currencyCode': '<?php echo $orderCurrency?>',
 		'purchase': {
@@ -41,10 +71,25 @@ $orderItems = $order->getAllVisibleItems();
 		  <?php foreach($orderItems as $item): ?>
 				<?php $intCtr++;?>
 				<?php if($item->getParentItemId()) continue;?>
+                <?php
+                    if ($helper->sendBaseData()==true) {
+                        if ($helper->itemIncludedVAT()) {
+                            $itemPrice = $item->getBasePriceInclTax();
+                        } else {
+                            $itemPrice = $item->getBasePrice();
+                        }
+                    } else {
+                        if ($helper->itemIncludedVAT()) {
+                            $itemPrice = $item->getPriceInclTax();
+                        } else {
+                            $itemPrice = $item->getPrice();
+                        }
+                    }
+                ?>
 		  {                            
 			'name': '<?php echo $this->jsQuoteEscape($item->getName()) ?>',     // Name or ID is required.
 			'id': '<?php echo $this->jsQuoteEscape($item->getSku()) ?>',
-			'price': '<?php echo ($helper->sendBaseData()==true ? $item->getBasePrice() : $item->getPrice()) ?>',
+			'price': '<?php echo $itemPrice ?>',
 			'brand': '<?php echo $this->jsQuoteEscape($helper->getBrand($item->getProduct())) ?>',
 			'category': '<?php echo $this->jsQuoteEscape($helper->getQuoteCategoryName($item)) ?>',
 			'quantity': <?php echo $item->getQtyOrdered()?>
@@ -57,5 +102,68 @@ $orderItems = $order->getAllVisibleItems();
 		}
 	  }
 	});
+    <?php endif; ?>
+
+function formatPrice(priceValue, asString) {
+    let val = priceValue;
+    if (typeof val === 'string')
+    {
+        val = val.replace(/,/g, '');
+    }
+    if (asString === undefined || asString !== true) {
+        return parseFloat(parseFloat(val).toFixed(2));
+    }
+    return parseFloat(val).toFixed(2);
+}
+
+function convertPurchaseItems() {
+    let prods = [];
+    <?php $loop = 1; ?>
+    <?php foreach ($orderItems as $item): ?>
+    <?php if($item->getParentItemId()) continue;?>
+    <?php
+    if ($helper->sendBaseData()==true) {
+        if ($helper->itemIncludedVAT()) {
+            $itemPrice = $item->getBasePriceInclTax();
+        } else {
+            $itemPrice = $item->getBasePrice();
+        }
+    } else {
+        if ($helper->itemIncludedVAT()) {
+            $itemPrice = $item->getPriceInclTax();
+        } else {
+            $itemPrice = $item->getPrice();
+        }
+    }
+    ?>
+        prods.push({
+            item_name: '<?php echo $this->jsQuoteEscape($item->getName()); ?>',
+            item_id: '<?php echo $this->jsQuoteEscape($item->getSku()); ?>',
+            price: formatPrice('<?php echo $itemPrice; ?>', false),
+            item_brand: '<?php echo $this->jsQuoteEscape($helper->getBrand($item->getProduct())); ?>',
+            item_category: '<?php echo $this->jsQuoteEscape($helper->getQuoteCategoryName($item)); ?>',
+            quantity: <?php echo $item->getQtyOrdered(); ?>,
+            affiliation: "<?php echo $helper->getAffiliation(); ?>",
+            currency: "<?php echo $helper->getCurrency(); ?>",
+            index: <?php echo $loop; ?>
+        });
+    <?php $loop++; ?>
+    <?php endforeach; ?>
+    return prods;
+}
 //]]>
 </script>
+
+<?php if ($helper->isEnhancedConversionEnabled()):?>
+    <script>
+        <?php if ($helper->getEnhancedConversionFormat() == 1):?>
+            dataLayer.push({ ecommerce: null });
+            dataLayer.push({
+                'event': 'conversion_pii',
+                'conversionData': <?php echo json_encode($this->getConversionData())?>
+            });
+        <?php else: ?>
+            var conversionData = <?php echo json_encode($this->getConversionData())?>;
+        <?php endif;?>
+    </script>
+<?php endif;?>

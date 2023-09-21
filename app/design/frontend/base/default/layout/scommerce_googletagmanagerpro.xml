@@ -6,10 +6,6 @@
 				<script>scommerce/require_jquery.js</script>
 				<params><![CDATA[data-group="js001"]]></params>
 			</action>
-			<action method="addJs" ifconfig="scommerce_googletagmanagerpro/options/enhanced_ecommerce">
-				<script>scommerce/gtmpromotion.js</script>
-				<params><![CDATA[data-group="js001"]]></params>
-			</action>
 			<block type="scommerce_googletagmanagerpro/script" name="scommerce.googletagmanagerpro" as="scommerce.googletagmanagerpro">
 				<action method="setPageType"><type>other</type></action>
 			</block>
@@ -109,6 +105,10 @@
                    template="scommerce/googletagmanagerpro/checkout/onepage.phtml"/>
 			<block type="scommerce_googletagmanagerpro/gtm" name="gtm_tracking_other" template="scommerce/googletagmanagerpro/gtm.phtml" after="-"/>
         </reference>
+		<reference name="scommerce.googletagmanagerpro">
+			<action method="setPageType"><type>checkout</type></action>
+			<action method="setUseProductData"><bool>1</bool></action>
+		</reference>
     </checkout_onepage_index>
 	
 	<!--Go Mage one page checkout-->
@@ -226,6 +226,10 @@
 		<reference name="scommerce.googletagmanagerpro">
 			<action method="setPageType"><type>cart</type></action>
 			<action method="setUseProductData"><bool>1</bool></action>
+		</reference>
+		<reference name="head">
+			<block type="scommerce_googletagmanagerpro/cart" name="googletagmanagerpro_cart"
+				   template="scommerce/googletagmanagerpro/cart.phtml"/>
 		</reference>
 	</checkout_cart_index>
 </layout>
