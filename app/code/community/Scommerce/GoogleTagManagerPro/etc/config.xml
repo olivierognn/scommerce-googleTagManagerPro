@@ -2,37 +2,30 @@
 <config>
     <modules>
         <Scommerce_GoogleTagManagerPro>
-            <version>0.0.47</version>
+            <version>0.0.33</version>
         </Scommerce_GoogleTagManagerPro>
     </modules>
     <global>
-        <models>
+		<models>
             <scommerce_googletagmanagerpro>
                 <class>Scommerce_GoogleTagManagerPro_Model</class>
             </scommerce_googletagmanagerpro>
         </models>
-        <blocks>
+		<blocks>
             <scommerce_googletagmanagerpro>
                 <class>Scommerce_GoogleTagManagerPro_Block</class>
             </scommerce_googletagmanagerpro>
-            <!--catalog>
+			<catalog>
                 <rewrite>
                     <product_list>Scommerce_GoogleTagManagerPro_Block_Product_List</product_list>
                 </rewrite>
-            </catalog-->
+			</catalog>
         </blocks>
         <helpers>
             <scommerce_googletagmanagerpro>
                 <class>Scommerce_GoogleTagManagerPro_Helper</class>
             </scommerce_googletagmanagerpro>
         </helpers>
-        <resources>
-            <scommerce_googletagmanagerpro_setup>
-                <setup>
-                    <module>Scommerce_GoogleTagManagerPro</module>
-                </setup>
-            </scommerce_googletagmanagerpro_setup>
-        </resources>
     </global>
     <frontend>
         <layout>
@@ -42,15 +35,7 @@
                 </scommerce_googletagmanagerpro>
             </updates>
         </layout>
-        <events>
-            <sales_quote_item_set_product>
-                <observers>
-                    <scommerce_universalanalytics_google_category>
-                        <class>scommerce_googletagmanagerpro/observer</class>
-                        <method>salesQuoteItemSetTrackingList</method>
-                    </scommerce_universalanalytics_google_category>
-                </observers>
-            </sales_quote_item_set_product>
+		<events>
             <checkout_cart_product_add_after>
                 <observers>
                     <scommerce_googletagmanagerpro_setcookie>
@@ -81,10 +66,10 @@
                 </observers>
             </eav_collection_abstract_load_before>
 
-            <controller_action_postdispatch_contacts_index_post>
+			<controller_action_postdispatch_contacts_index_post>
                 <observers>
                     <scommerce_googletagmanagerpro_contact_submit_after>
-                        <type>singleton</type>
+						<type>singleton</type>
                         <class>scommerce_googletagmanagerpro/observer</class>
                         <method>ContactPost</method>
                     </scommerce_googletagmanagerpro_contact_submit_after>
@@ -94,7 +79,7 @@
             <customer_register_success>
                 <observers>
                     <scommerce_googletagmanagerpro_register_success>
-                        <type>singleton</type>
+						<type>singleton</type>
                         <class>scommerce_googletagmanagerpro/observer</class>
                         <method>CustomerRegister</method>
                     </scommerce_googletagmanagerpro_register_success>
@@ -103,7 +88,7 @@
         </events>
     </frontend>
     <adminhtml>
-        <events>
+		<events>
             <sales_order_creditmemo_save_after>
                 <observers>
                     <scommerce_googletagmanagerpro>
@@ -113,7 +98,7 @@
                 </observers>
             </sales_order_creditmemo_save_after>
 
-            <sales_order_place_after>
+			<sales_order_place_after>
                 <observers>
                     <scommerce_googletagmanagerpro>
                         <class>scommerce_googletagmanagerpro/observer</class>
@@ -121,7 +106,7 @@
                     </scommerce_googletagmanagerpro>
                 </observers>
             </sales_order_place_after>
-        </events>
+		</events>
         <acl>
             <resources>
                 <admin>
@@ -141,7 +126,7 @@
                 </admin>
             </resources>
         </acl>
-        <layout>
+		<layout>
             <updates>
                 <scommerce_googletagmanagerpro>
                     <file>scommerce_googletagmanagerpro.xml</file>
@@ -149,22 +134,18 @@
             </updates>
         </layout>
     </adminhtml>
-    <default>
+	<default>
         <scommerce_googletagmanagerpro>
-            <options>
-                <enabled>0</enabled>
-                <license_key></license_key>
-                <revenue>0</revenue>
-                <account_id></account_id>
-                <include_transaction_id>0</include_transaction_id>
-                <pii_data_format>0</pii_data_format>
-                <admin_source>phone</admin_source>
-                <admin_medium>admin</admin_medium>
-                <gdpr_cookie_enabled>0</gdpr_cookie_enabled>
-                <gdpr_cookie_key>cookie_accepted</gdpr_cookie_key>
+			<options>
+				<enabled>0</enabled>
+				<license_key></license_key>
+				<account_id></account_id>
+				<admin_source>phone</admin_source>
+				<admin_medium>admin</admin_medium>
+				<gdpr_cookie_enabled>0</gdpr_cookie_enabled>
+				<gdpr_cookie_key>cookie_accepted</gdpr_cookie_key>
                 <order_total_include_vat>1</order_total_include_vat>
-                <order_item_include_vat>1</order_item_include_vat>
-            </options>
+			</options>
         </scommerce_googletagmanagerpro>
-    </default>
+	</default>
 </config>

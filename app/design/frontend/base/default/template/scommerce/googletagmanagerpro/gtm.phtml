@@ -9,16 +9,6 @@ if ($helper->isGoogleOptimizeEnabled() && strlen($optimizeId)):?>
 	})(window,document.documentElement,'async-hide','dataLayer',4000,
 	{'<?php echo $optimizeId?>':true});</script>
 <?php endif;
-if ($helper->isGA4Enabled()):
-    $useGa4 = true;
-else:
-    $useGa4 = false;
-endif;
-if ($helper->isUAEnabled()):
-    $useUA = true;
-else:
-    $useUA = false;
-endif;
 if ($helper->isEEEnabled()): 
 $customer = Mage::getSingleton('customer/session')->getCustomer();
 ?>
@@ -50,11 +40,10 @@ function manipulationOfCart(product, type, list) {
 	}
 	
     if (type == 'add'){
-        <?php if ($useUA): ?>
 	    dataLayer.push({
 		  'event': 'addToCart',
 		  'ecommerce': {
-			'currencyCode': "<?php echo $helper->getCurrency(); ?>",
+			'currencyCode': '<?php echo Mage::app()->getStore()->getCurrentCurrencyCode();?>',
 			'add': {                                // 'add' actionFieldObject measures.
 			  'actionField': {'list': list},
 			  'products': [{                        //  adding a product to a shopping cart.
@@ -69,31 +58,12 @@ function manipulationOfCart(product, type, list) {
 			}
 		  }
 		});
-        <?php endif; ?>
-        <?php if ($useGa4): ?>
-        dataLayer.push({ ecommerce: null });
-        dataLayer.push({
-            'event': 'add_to_cart',
-            'ecommerce': {
-                'items': convertAddToCartItem([{
-                    'name': product.name,
-                    'id': product.id,
-                    'price': product.price,
-                    'brand': product.brand,
-                    'category': product.category,
-                    'quantity': product.qty,
-                    'list': list
-                }])
-            }
-        });
-        <?php endif; ?>
     }
     else if (type == 'remove'){
-        <?php if ($useUA): ?>
 	    dataLayer.push({
 		  'event': 'removeFromCart',
 		  'ecommerce': {
-			'currencyCode': "<?php echo $helper->getCurrency(); ?>",
+			'currencyCode': '<?php echo Mage::app()->getStore()->getCurrentCurrencyCode();?>',
 			'remove': {                             // 'remove' actionFieldObject measures.
 			  'actionField': {'list': list},
 			  'products': [{                        //  adding a product to a shopping cart.
@@ -108,33 +78,6 @@ function manipulationOfCart(product, type, list) {
 			}
 		  }
 		});
-        <?php endif; ?>
-        <?php if ($useGa4): ?>
-        dataLayer.push({ ecommerce: null });
-        let items = {
-            item_name: product.name,
-            item_id: product.id,
-            price: formatPrice(product.price, false),
-            item_brand: product.brand,
-            quantity: product.qty,
-            item_list_name: product.list,
-            affiliation: "<?php echo $helper->getAffiliation(); ?>",
-            currency: "<?php echo $helper->getCurrency(); ?>"
-        };
-        let categories = product.category.split('->');
-        items['item_category'] = categories[0];
-        for (let j = 1; j < categories.length; j++) {
-            key = 'item_category' + (j + 1);
-            items[key] = categories[j];
-        }
-        let content = {
-            'event': 'remove_from_cart',
-            'ecommerce': {
-                'items': [items]
-            }
-        }
-        dataLayer.push(content);
-        <?php endif; ?>
     }
 }
 
@@ -145,12 +88,12 @@ if ($addedProduct || $removedProduct):
 	gtmPro(document).ready(function($){
 		<?php if ($addedProduct):?>
 		var productToBasket = <?php echo $addedProduct?>;
-		var productlist = Mage.Cookies.get("trackinglist");
+		var productlist = Mage.Cookies.get("productlist");
 		//console.log(productlist);
 		if (productToBasket != undefined){
 			//console.log(productToBasket);
 			manipulationOfCart(productToBasket, 'add', productlist);
-			Mage.Cookies.clear("trackinglist");
+			Mage.Cookies.clear("productlist");
 		}
 		<?php Mage::getModel('core/session')->unsProductToBasket();
 		endif;?>
@@ -165,112 +108,6 @@ if ($addedProduct || $removedProduct):
 		endif;?>
 	});
 <?php endif;?>
-
-jQuery(document).ready(function ($) {
-    var promotionCount = jQuery('a[data-promotion]').size();
-    if (promotionCount > 0) {
-        var a = ['id', 'name', 'creative', 'position'];
-        var promoImpression = [];
-        var promoClick = [];
-        jQuery('a[data-promotion]').each(function () {
-            if ($(this).data("promotion") == !0) {
-                var obj = {};
-                obj[a[0]] = $(this).data("id");
-                obj[a[1]] = $(this).data("name");
-                obj[a[2]] = $(this).data("creative");
-                obj[a[3]] = $(this).data("position");
-                promoImpression.push(obj)
-            }
-            $(this).click(function (e) {
-                href = $(this).attr('href');
-                e.preventDefault();
-                <?php if ($useUA): ?>
-                dataLayer.push({ ecommerce: null });
-                dataLayer.push({
-                    'event': 'promotionClick',
-                    'ecommerce': {'promoClick': {'promotions': [obj]}},
-                    'eventCallback': function () {
-                        if (!(e.ctrlKey || e.which == 2)) {
-                            document.location = href
-                        }
-                    }
-                });
-                <?php endif; ?>
-                <?php if ($useGa4): ?>
-                dataLayer.push({ ecommerce: null });
-                dataLayer.push({
-                    'event': 'select_promotion',
-                    'ecommerce': {
-                        'items': [obj]
-                    }
-                });
-                <?php endif; ?>
-            });
-        });
-        <?php if ($useGa4): ?>
-        dataLayer.push({ ecommerce: null });
-        dataLayer.push({
-            'event': 'view_promotion',
-            'ecommerce': {
-                'items': promoImpression
-            }
-        });
-        <?php endif; ?>
-        <?php if ($useUA): ?>
-        dataLayer.push({ ecommerce: null });
-        dataLayer.push({
-            'event': 'promoView',
-            'ecommerce': {
-                'promoView': {
-                    'promotions': promoImpression
-                }
-            }
-        });
-        <?php endif; ?>
-    }
-})
-
-
-function convertAddToCartItem(data) {
-    let prods = [];
-    for (let i = 0; i < data.length; i++) {
-        prods.push({
-            item_name: data[i].name,
-            item_id: data[i].id,
-            price: formatPrice(data[i].price, false),
-            item_brand: data[i].brand,
-            quantity: data[i].quantity,
-            item_list_name: data[i].list,
-            item_list_id: getListId(data[i].list),
-            affiliation: "<?php echo $helper->getAffiliation(); ?>",
-            currency: "<?php echo $helper->getCurrency(); ?>"
-        });
-        let categories = data[i].category.split('->');
-        prods[i]['item_category'] = categories[0];
-        for (let j = 1; j < categories.length; j++) {
-            key = 'item_category' + (j + 1);
-            prods[i][key] = categories[j];
-        }
-    }
-    return prods;
-}
-
-function formatPrice(priceValue, asString) {
-    let val = priceValue;
-    if (typeof val === 'string')
-    {
-        val = val.replace(/,/g, '');
-    }
-    if (asString === undefined || asString !== true) {
-        return parseFloat(parseFloat(val).toFixed(2));
-    }
-    return parseFloat(val).toFixed(2);
-}
-
-function getListId(listName) {
-    if (listName !== undefined && listName !== "undefined")
-        return listName.trim().replace(/[^\w ]/g,' ').replace(/\s\s+/g, ' ').replace(/\s/g, '_').toLowerCase();
-}
 //]]>
 </script>
 <?php endif;

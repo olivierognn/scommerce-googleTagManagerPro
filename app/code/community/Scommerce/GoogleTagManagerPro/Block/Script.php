@@ -12,33 +12,33 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
 	 * Google Remarketing Allowed Page Types
 	 * @see https://support.google.com/adwords/answer/3103357?hl=en
 	 */
-	private $_allowedPageTypes 	= array('home','searchresults','category','product','cart','purchase','other','checkout');
-
+	private $_allowedPageTypes 	= array('home','searchresults','category','product','cart','purchase','other');
+	
 	/**
 	 * Default template to use for Google Remarketing Script HTML
 	 */
 	private $_useTemplate		= 'scommerce/googletagmanagerpro/script.phtml';
-
+	
 	/**
-	 * Default product attribute to use for
+	 * Default product attribute to use for 
 	 */
 	private $_productAttribute 	= 'sku';
-
+	
 	/**
-	 * Default cart and sales attribute to use
+	 * Default cart and sales attribute to use 
 	 */
 	private $_saleAttribute 	= 'product_id';
-
+	
 	/**
 	 * Default pagetype
 	 */
 	private $_pagetype			= 'other';
-
+	
 	/**
 	 * Cart Items
 	 */
 	private $_cartItems			= array();
-
+	
 	/**
 	 * Remarketing class constructor
 	 */
@@ -46,16 +46,16 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
 		parent::_construct();
 		$this->_productAttribute 	= Mage::helper('scommerce_googletagmanagerpro')->getProductAtributeKey();
 	}
-
+	
 	/**
 	 * Set the needed template
 	 */
 	public function _prepareLayout(){
 		$this->setTemplate($this->_useTemplate);
 	}
-
+	
 	/**
-	 * Set current pagetype
+	 * Set current pagetype 
 	 * @param string
 	 */
 	public function setPageType($pagetype){
@@ -63,15 +63,15 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
 			$this->_pagetype = strtolower($pagetype);
 		}
 	}
-
+	
 	/**
-	 * get current pagetype
+	 * get current pagetype 
 	 * @param string
 	 */
 	public function getPageType(){
 		return $this->_pagetype;
 	}
-
+	
 	/**
 	 * Set product attribute to use for Google Product Key
 	 * @param string
@@ -79,12 +79,12 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
 	public function setProductAttributeName($attributename){
 		$this->_productAttribute = strtolower($attributename);
 	}
-
+	
 	/**
-	 *
+	 * 
 	 */
 	public function getJsConfigParams(){
-
+		
 		/**
 		 * Default parameters
 		 */
@@ -93,42 +93,37 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
 			'ecomm_prodid' => '',
 			'ecomm_totalvalue' => ''
 		);
-
+		
 		switch($this->_pagetype){
+			default:
+			break;
+			
 			case 'category':
 				$_params = array_merge($_params,$this->collectCurrentCategoryData());
 			break;
-
+				
 			case 'product':
 				$_params = array_merge($_params,$this->collectCurrentProductData());
 			break;
-
+				
 			case 'cart':
 				$_params = array_merge($_params,$this->collectCurrentCartData());
 			break;
-
+				
 			case 'purchase':
 				$_params = array_merge($_params,$this->collectCurrentOrderData());
 			break;
-
-            case 'checkout':
-                $_params = array_merge($_params, $this->collectCurrentCartData());
-                $_params['ecomm_pagetype'] = 'other';
-            break;
-
-            default:
-                break;
 		}
-
+		
 		$param = preg_replace('/"([^"]+)"s*:s*/', '$1: $2',Mage::helper('core')->jsonEncode($_params));
 		$param = str_replace(',',','.chr(13),$param);
 		$param = str_replace('^',',',$param);
 		$param = str_replace('{','{'.chr(13),$param);
 		$param = str_replace('}',chr(13).'}',$param);
 		// Return parameters as an array
-		return $param;
+		return $param;	
 	}
-
+	
 	/**
 	 * Collect the data from current category
 	 */
@@ -137,65 +132,39 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
 		if($_category && $_category instanceof Mage_Catalog_Model_Category){
 			$_productCollection = $this->getLayout()->getBlockSingleton('catalog/product_list')->getLoadedProductCollection();
 			$products = array();
-            $store = Mage::app()->getStore();
-            $taxCalculation = Mage::getModel('tax/calculation');
-            $request = $taxCalculation->getRateRequest(null, null, null, $store);
-            $totalPrice = 0;
-            $totalTax = 0;
 			foreach ($_productCollection as $_product){
 				 $products[] = $this->getProdId($_product, 'catalog');
-                 $price = $this->formatPrice(Mage::helper('scommerce_googletagmanagerpro')->getProductPrice($_product));
-                 $totalPrice += $price;
-                 $taxClassId = $_product->getTaxClassId();
-                 $percent = $taxCalculation->getRate($request->setProductClassId($taxClassId)) / 100;
-                 $tax = $price * $percent;
-                 $totalTax += $tax;
 			}
-            $gtmHelper = Mage::helper('scommerce_googletagmanagerpro');
-            $_params['ecomm_product_ids'] = $products;
-            $_params['ecomm_totalvalue'] = $this->formatPrice($gtmHelper->totalIncludedVAT() ?
-                $totalPrice + $totalTax :
-                $totalPrice
-            );
+			$_params['ecomm_product_ids'] = $products;
 			return $_params;
-
+			
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Collect the data from current product
 	 */
 	private function collectCurrentProductData(){
 		$_product = Mage::registry('current_product');
-        $store = Mage::app()->getStore();
-        $taxCalculation = Mage::getModel('tax/calculation');
-        $request = $taxCalculation->getRateRequest(null, null, null, $store);
-        $taxClassId = $_product->getTaxClassId();
-        $percent = $taxCalculation->getRate($request->setProductClassId($taxClassId)) / 100;
-        $gtmHelper = Mage::helper('scommerce_googletagmanagerpro');
 		if($_product && $_product instanceof Mage_Catalog_Model_Product){
 			$price = $this->formatPrice(Mage::helper('scommerce_googletagmanagerpro')->getProductPrice($_product));
-            $tax = $price * $percent;
 			$_params = array();
 			$_params['ecomm_name'] = $this->jsQuoteEscape(str_replace(',','^',$_product->getName()));
 			$_params['ecomm_prodid'] = $this->getProdId($_product, 'catalog');
-			$_params['ecomm_totalvalue'] = $this->formatPrice($gtmHelper->totalIncludedVAT() ?
-                $price + $tax :
-                $price
-            );
+			$_params['ecomm_totalvalue'] = $price;
 			$_params['ecomm_pvalue'] = $price;
-
+			
 			if(Mage::registry('current_category')){
 				$_params['ecomm_category'] = Mage::registry('current_category')->getName();
 			}
-
+			
 			return $_params;
-
+			
 		}
 		return false;
 	}
-
+	
 	/**
 	 * Collect data from the shopping cart page
 	 */
@@ -243,17 +212,17 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
         }
         return false;
     }
-
+	
 	public function getCartItems()
 	{
 		$param = preg_replace('/"([^"]+)"s*:s*/', '$1: $2',Mage::helper('core')->jsonEncode($this->_cartItems));
 		$param = str_replace(',',','.chr(13),$param);
 		$param = str_replace('^',',',$param);
 		$param = str_replace('{','{'.chr(13),$param);
-		$param = str_replace('}',chr(13).'}',$param);
+		$param = str_replace('}',chr(13).'}',$param);		
 		return $param;
 	}
-
+	
 	/**
 	 * Collect data from the current order
 	 */
@@ -269,9 +238,9 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
             $gtmHelper = Mage::helper('scommerce_googletagmanagerpro');
 			$base = $gtmHelper->sendBaseData();
 			foreach($_order->getAllItems() as $_product){
-				if ($base):
+				if ($base): 
 					$price = $_product->getBasePriceInclTax();
-					$price_excl_tax = $_product->getBasePrice();
+					$price_excl_tax = $_product->getBasePrice(); 
 				else:
 					$price = $_product->getPriceInclTax();
 					$price_excl_tax = $_product->getPrice();
@@ -289,10 +258,10 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
 												"qty" => (int)$qty);
 				}
 			}
-
+			
 			$_params = array();
 			$_params['ecomm_prodid'] = $products;
-			if ($base):
+			if ($base): 
 				$_params['ecomm_totalvalue'] = $this->formatPrice($gtmHelper->totalIncludedVAT() ?
                     $_order->getBaseGrandTotal() :
                     $_order->getBaseGrandTotal() - $_order->getBaseTaxAmount()
@@ -306,21 +275,21 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
 			$_params['ecomm_quantity'] = $qtys;
 			$_params['ecomm_pvalue'] =  $prices;
 			$_params['hasaccount'] = $_order['customer_is_guest'] == 1 ? 'N' : 'Y';
-
+		
 			return $_params;
 
 		}
-
+		
 		return false;
 	}
-
+	
 	/**
 	 * Formats a price in store currency settings
 	 */
 	private function formatPrice($price){
         return floatval(preg_replace('/[^\d.]/', '', number_format($price,2)));
 	}
-
+	
 	/**
      * Gets prodid attribute string from product object
      */
@@ -333,5 +302,5 @@ Class Scommerce_GoogleTagManagerPro_Block_Script extends Mage_Core_Block_Templat
 			return $_product->getData($this->_productAttribute);
 		}
     }
-
+	
 }

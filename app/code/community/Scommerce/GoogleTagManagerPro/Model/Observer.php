@@ -13,24 +13,6 @@ class Scommerce_GoogleTagManagerPro_Model_Observer
 	{
 		$this->_helper = Mage::helper('scommerce_googletagmanagerpro');
 	}
-
-
-    public function salesQuoteItemSetTrackingList($observer)
-    {
-        $quoteItem = $observer->getQuoteItem();
-        $product = $observer->getProduct();
-        $category = $quoteItem->getTrackingList();
-
-        if (!isset($category)){
-            $cookie = Mage::getSingleton('core/cookie');
-            $category = str_replace('"','',$cookie->get("trackinglist"));
-
-            if (!isset($category) || strlen($category)==0){
-                $category = $this->_helper->getProductCategoryName($product);
-            }
-            $quoteItem->setTrackingList($category);
-        }
-    }
 	
 	/**
      * Triggers on customer registration
@@ -68,7 +50,7 @@ class Scommerce_GoogleTagManagerPro_Model_Observer
             'name' => $product->getName(),
             'category' => $this->_helper->getProductCategoryName($product),
             'brand' => $this->_helper->getBrand($product),
-            'price' => $this->_helper->getProductPrice($product),
+            'price' => $product->getFinalPrice(),
             'qty' => $quoteItem->getQty()
         );
 
@@ -92,7 +74,7 @@ class Scommerce_GoogleTagManagerPro_Model_Observer
             'name' => $product->getName(),
             'category' => $this->_helper->getProductCategoryName($product),
             'brand' => $this->_helper->getBrand($product),
-            'price' => $this->_helper->getProductPrice($product),
+            'price' => $product->getFinalPrice(),
             'qty' => $observer->getQuoteItem()->getQty()
         );
 

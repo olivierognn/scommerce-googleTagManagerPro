@@ -5,16 +5,6 @@
 ?>
 <?php
 $helper = Mage::helper('scommerce_googletagmanagerpro');
-if ($helper->isGA4Enabled()):
-    $useGa4 = true;
-else:
-    $useGa4 = false;
-endif;
-if ($helper->isUAEnabled()):
-    $useUA = true;
-else:
-    $useUA = false;
-endif;
 if (!$helper->isEnabled() || !$helper->isEEEnabled()) return; ?>
 <?php $cartItems = $this->getCartItems(); 
 $userId = Mage::getSingleton('customer/session')->getCustomer()->getId();
@@ -30,8 +20,8 @@ gtmPro(document).ready(function($) {
 	//console.log("checkout - <?php echo $userId;?>");
 	var registered = '<?php echo $this->__('Registered')?>'; var guest = '<?php echo $this->__('Guest')?>';
 	var differentAddress = '<?php echo $this->__('Use Different Shipping Address')?>'; var sameAsBilling = '<?php echo $this->__('Use Billing Address For Shipping')?>';
-	var shipping = gtmPro.trim(gtmPro('input[name=shipping_method]:checked').closest('li').find('label').contents().get(0).nodeValue);
-	var payment = gtmPro.trim(gtmPro('input[name="payment[method]"]:checked').closest('dt').find('label').contents().get(0).nodeValue);
+	var shipping = gtmPro('input[name=shipping_method]:checked').val();
+	var payment = gtmPro('input[name="payment[method]"]:checked').val();
 	
 	loggedin = "<?php echo $userId;?>";
 	if (loggedin.length>0){
@@ -183,7 +173,6 @@ function sendGoogleData(name,value){
 function steps(value, pos){
 	if (value!=undefined){
 	//console.log(value,pos);
-        <?php if ($useUA): ?>
         if (pos==1){
             <?php $intCtr=0;?>
              dataLayer.push({
@@ -198,7 +187,7 @@ function steps(value, pos){
                     {
                       'name': '<?php echo $this->jsQuoteEscape($_quoteItem->getName()) ?>',
                       'id': '<?php echo $this->jsQuoteEscape($_quoteItem->getSku()) ?>',
-                      'price': <?php echo $_quoteItem->getBasePrice() ?>,
+                      'price': '<?php echo $_quoteItem->getBasePrice() ?>',
                       'brand': '<?php echo $this->jsQuoteEscape($helper->getBrand($_quoteItem->getProduct())) ?>',
                       'category': '<?php echo $this->jsQuoteEscape($helper->getQuoteCategoryName($_quoteItem)) ?>',
                       'quantity': '<?php echo $_quoteItem->getQty() ?>'
@@ -229,89 +218,7 @@ function steps(value, pos){
                 }
             });
         }
-        <?php endif; ?>
-        <?php if ($useGa4): ?>
-        if (pos == 1) {
-            dataLayer.push({ ecommerce: null });
-            dataLayer.push({
-                'event': 'begin_checkout',
-                'ecommerce': {
-                    'items': convertCheckoutItems()
-                }
-            });
-        }
-        if (pos == 3) {
-            dataLayer.push({ecommerce: null});
-            dataLayer.push({
-                'event': 'add_shipping_info',
-                'ecommerce': {
-                    'currency': "<?php echo $helper->getCurrency(); ?>",
-                    'shipping_tier': gtmPro.trim(gtmPro('input[name=shipping_method]:checked').closest('li').find('label').contents().get(0).nodeValue),
-                    'items': convertPurchaseItems()
-                }
-            });
-        }
-        if (pos == 4) {
-            dataLayer.push({ecommerce: null});
-            dataLayer.push({
-                'event': 'add_payment_info',
-                'ecommerce': {
-                    'currency': "<?php echo $helper->getCurrency(); ?>",
-                    'payment_type': gtmPro.trim(gtmPro('input[name="payment[method]"]:checked').closest('dt').find('label').contents().get(0).nodeValue),
-                    'items': convertPurchaseItems()
-                }
-            });
-        }
-        <?php endif; ?>
     }
-}
-function convertCheckoutItems() {
-    let prods = [];
-    <?php foreach ($cartItems as $item): ?>
-    <?php
-        $itemPrice = $helper->itemIncludedVAT() ? $item->getBasePriceInclTax() : $item->getBasePrice();;
-    ?>
-    prods.push({
-        item_name: '<?php echo $this->jsQuoteEscape($item->getName()) ?>',
-        item_id: '<?php echo $this->jsQuoteEscape($item->getSku()) ?>',
-        price: formatPrice('<?php echo $itemPrice ?>', false),
-        item_brand: '<?php echo $this->jsQuoteEscape($helper->getBrand($item->getProduct())) ?>',
-        item_category: '<?php echo $this->jsQuoteEscape($helper->getQuoteCategoryName($item)) ?>',
-        quantity: '<?php echo $item->getQty() ?>',
-        item_list_name: "<?php echo $item->getTrackingList() ?>",
-        item_list_id: getListId("<?php $item->getTrackingList() ?>"),
-        affiliation: "<?php echo $helper->getAffiliation(); ?>",
-        currency: "<?php echo $helper->getCurrency(); ?>"
-    });
-    <?php endforeach; ?>
-
-    return prods;
-}
-
-function convertPurchaseItems() {
-    let prods = [];
-    <?php $loop = 1; ?>
-    <?php foreach ($cartItems as $item): ?>
-    <?php
-        $itemPrice = $helper->itemIncludedVAT() ? $item->getBasePriceInclTax() : $item->getBasePrice();;
-    ?>
-    prods.push({
-        item_name: '<?php echo $this->jsQuoteEscape($item->getName()) ?>',
-        item_id: '<?php echo $this->jsQuoteEscape($item->getSku()) ?>',
-        price: formatPrice('<?php echo $itemPrice ?>', false),
-        item_brand: '<?php echo $this->jsQuoteEscape($helper->getBrand($item->getProduct())) ?>',
-        item_category: '<?php echo $this->jsQuoteEscape($helper->getQuoteCategoryName($item)) ?>',
-        item_list_name: "<?php echo $item['list'] ?>",
-        item_list_id: getListId("<?php echo $item['list'] ?>"),
-        quantity: '<?php echo $item->getQty() ?>',
-        affiliation: "<?php echo $helper->getAffiliation(); ?>",
-        currency: "<?php echo $helper->getCurrency(); ?>",
-        index: "<?php echo $this->jsQuoteEscape($loop); ?>"
-    });
-    <?php $loop++; ?>
-    <?php endforeach; ?>
-
-    return prods;
 }
 //]]>
 
